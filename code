@@ -1,0 +1,42 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int minimum_containers_needed(vector<int>& shipments, vector<int>& container_limits) {
+// Sort shipments and container_limits in descending order
+sort(shipments.rbegin(), shipments.rend());
+sort(container_limits.rbegin(), container_limits.rend());
+
+int container_count = 0;
+int container_index = 0;
+
+for (int shipment : shipments) {
+while (shipment > 0) {
+if (container_index >= container_limits.size()) {
+return -1; // Not enough container capacity
+}
+if (container_limits[container_index] > 0) {
+int used_capacity = min(shipment, container_limits[container_index]);
+container_limits[container_index] -= used_capacity;
+shipment -= used_capacity;
+if (container_limits[container_index] == 0) {
+container_count++;
+}
+}
+if (shipment > 0 && container_limits[container_index] == 0) {
+container_index++;
+}
+}
+}
+
+// Ensure the count is accurate
+for (; container_index < container_limits.size(); ++container_index) {
+if (container_limits[container_index] < container_limits[0]) {
+container_count++;
+}
+}
+
+return container_count;
+}
